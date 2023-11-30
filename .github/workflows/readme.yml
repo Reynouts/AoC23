@@ -1,0 +1,47 @@
+name: AUTO-README
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # run every day when a new puzzle is available
+    - cron:  '3 5 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v3 # checkout the repository content to github runner
+        with:
+          fetch-depth: 0
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.6' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: execute py script
+        run: python README.py 
+        
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          (git commit -m "update readme" -a) || true
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main 
