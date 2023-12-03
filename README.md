@@ -7,3 +7,6 @@ but that can be solved with positive lookahead.
 ## [--- Day 2: Cube Conundrum ---](http://adventofcode.com/2023/day/2)
 Just some 10 minute weekend holiday coding at the Ardennes! 
 Nothing fancy.. part 2 was given the way I solved part 1.
+
+## [--- Day 3: Gear Ratios ---](http://adventofcode.com/2023/day/3)
+
