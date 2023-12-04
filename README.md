@@ -19,3 +19,7 @@ when reading the description. After grasping the idea, the programming
 was not so hard and integrating part 2 with part 1 worked like a 
 charm. After some advent of codes in which defaultdict was really
 a default in my solutions, here I could revisit it once more.
+GPT4 can solve days 2 and 4, without a problem or extra input, 
+it's getting crazy. Maybe it already pulls some fresh solutions from
+the AoC reddit megathread or github repo's, than it is less magic, 
+who knows, but I fear it comes up with its own magic ;-)
