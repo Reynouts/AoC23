@@ -25,4 +25,7 @@ the AoC reddit megathread or github repo's, than it is less magic,
 who knows, but I fear it comes up with its own magic ;-)
 
 ## [--- Day 5: If You Give A Seed A Fertilizer ---](http://adventofcode.com/2023/day/5)
-
+If it is brute-forceable: go for it :') For part two reversing from
+destination (location) to source (seed) made it doable. It was faster
+with calculating the answer than me coding a better way with ranges,
+so, this is it and I'm fine with it. 10 stars!
