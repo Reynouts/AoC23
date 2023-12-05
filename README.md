@@ -23,3 +23,6 @@ GPT4 can solve days 2 and 4, without a problem or extra input,
 it's getting crazy. Maybe it already pulls some fresh solutions from
 the AoC reddit megathread or github repo's, than it is less magic, 
 who knows, but I fear it comes up with its own magic ;-)
+
+## [--- Day 5: If You Give A Seed A Fertilizer ---](http://adventofcode.com/2023/day/5)
+
