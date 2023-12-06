@@ -3,7 +3,10 @@ import re
 
 
 def check_pair(time, distance):
-    return sum(1 for hold in range(time) if (time - hold) * hold > distance)
+    for hold in range(time):
+        if (time-hold) * hold > distance:
+            return time - (hold * 2) + 1
+    return 0
 
 
 def main():
