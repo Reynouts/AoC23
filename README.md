@@ -29,3 +29,6 @@ If it is brute-forceable: go for it :') For part two reversing from
 destination (location) to source (seed) made it doable. It was faster
 with calculating the answer than me coding a better way with ranges,
 so, this is it and I'm fine with it. 10 stars!
+
+## [--- Day 6: Wait For It ---](http://adventofcode.com/2023/day/6)
+
