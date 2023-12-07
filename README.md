@@ -33,3 +33,6 @@ so, this is it and I'm fine with it. 10 stars!
 ## [--- Day 6: Wait For It ---](http://adventofcode.com/2023/day/6)
 A breather today. Easy solution which worked for part 2. No need
 to create a closed form solution, a lot more days to come.
+
+## [--- Day 7: Camel Cards ---](http://adventofcode.com/2023/day/7)
+
