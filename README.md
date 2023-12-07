@@ -31,8 +31,11 @@ with calculating the answer than me coding a better way with ranges,
 so, this is it and I'm fine with it. 10 stars!
 
 ## [--- Day 6: Wait For It ---](http://adventofcode.com/2023/day/6)
-A breather today. Easy solution which worked for part 2. No need
-to create a closed form solution, a lot more days to come.
+A breather today. Easy solution which worked for part 2, after noticing
+it was symmetric it became a fast solution.
 
 ## [--- Day 7: Camel Cards ---](http://adventofcode.com/2023/day/7)
-
+Good old poker game simulation! Fun one, decided just to go with
+an OO style simulation, which worked fine and fast. No real weird
+challenges along the way. Not very pythonic or compact code, but
+I wanted to keep it readable and understandable.
