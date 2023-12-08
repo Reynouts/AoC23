@@ -41,4 +41,7 @@ challenges along the way. Not very pythonic or compact code, but
 I wanted to keep it readable and understandable.
 
 ## [--- Day 8: Haunted Wasteland ---](http://adventofcode.com/2023/day/8)
-
+Classic solution for all AoC-veterans. Cycle check and use LCM. 
+Apparantly the python math library has a lcm function since 3.9
+which supports an arbitrary amount of arguments. Perfect for today!
+No need for numpy or own math skills.

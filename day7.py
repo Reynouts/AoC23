@@ -1,5 +1,4 @@
 from aocutils import *
-import re
 from collections import Counter
 
 
@@ -41,6 +40,7 @@ class Hand:
 
 def calc_score(cards):
     v = Counter(cards).values()
+
     if 5 in v:
         return 1
     if 4 in v:
