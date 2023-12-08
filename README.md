@@ -39,3 +39,6 @@ Good old poker game simulation! Fun one, decided just to go with
 an OO style simulation, which worked fine and fast. No real weird
 challenges along the way. Not very pythonic or compact code, but
 I wanted to keep it readable and understandable.
+
+## [--- Day 8: Haunted Wasteland ---](http://adventofcode.com/2023/day/8)
+
