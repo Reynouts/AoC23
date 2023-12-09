@@ -45,3 +45,6 @@ Classic solution for all AoC-veterans. Cycle check and use LCM.
 Apparantly the python math library has a lcm function since 3.9
 which supports an arbitrary amount of arguments. Perfect for today!
 No need for numpy or own math skills.
+
+## [--- Day 9: Mirage Maintenance ---](http://adventofcode.com/2023/day/9)
+
