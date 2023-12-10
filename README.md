@@ -47,7 +47,14 @@ which supports an arbitrary amount of arguments. Perfect for today!
 No need for numpy or own math skills.
 
 ## [--- Day 9: Mirage Maintenance ---](http://adventofcode.com/2023/day/9)
-
+A fine short weekend puzzle today. Part 2 was almost the same as 
+part 1, no real increased difficulty. Probably could do it very easily
+in reversed way, if you solve part 1 clean.
 
 ## [--- Day 10: Pipe Maze ---](http://adventofcode.com/2023/day/10)
-
+Went a bit crazy, cause I had a stupid bug in my first approach that I 
+couldn't figure out. I tried to expand the grid, so I could floodfill 
+it easily. Took a different turn later tried some possibilties to
+create polygons and check if points are inside or not.. so matplotlib 
+does the heavy lifting today. But I actually enjoyed this one to think 
+about!

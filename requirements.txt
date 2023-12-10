@@ -2,3 +2,5 @@ advent_of_code_data==1.1.0
 aocd==0.1
 requests==2.26.0
 numpy==1.21.4
+matplotlib~=3.8.2
+advent-of-code-data~=1.1.0
