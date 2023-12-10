@@ -48,3 +48,6 @@ No need for numpy or own math skills.
 
 ## [--- Day 9: Mirage Maintenance ---](http://adventofcode.com/2023/day/9)
 
+
+## [--- Day 10: Pipe Maze ---](http://adventofcode.com/2023/day/10)
+
