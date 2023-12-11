@@ -58,5 +58,11 @@ it easily. Took a different turn later tried some possibilties to
 create polygons and check if points are inside or not.. so matplotlib 
 does the heavy lifting today. But I actually enjoyed this one to think 
 about!
-## [--- Day 11: Cosmic Expansion ---](http://adventofcode.com/2023/day/11)
 
+## [--- Day 11: Cosmic Expansion ---](http://adventofcode.com/2023/day/11)
+For part 1 I expanded the grid as a quick solution, but already guessed that 
+would not work for p2. Had the sample input working fast, but made an error 
+which took some time to figure out, went back to p1 and solved that again
+ith my "new" approach and got my bug fixed. Code got even shorter this way.
+Should probably use numpy or pandas for these kind of operations. but I like
+basic python.
