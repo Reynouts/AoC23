@@ -66,3 +66,6 @@ which took some time to figure out, went back to p1 and solved that again
 ith my "new" approach and got my bug fixed. Code got even shorter this way.
 Should probably use numpy or pandas for these kind of operations. but I like
 basic python.
+
+## [--- Day 12: Hot Springs ---](http://adventofcode.com/2023/day/12)
+
