@@ -68,4 +68,7 @@ Should probably use numpy or pandas for these kind of operations. but I like
 basic python.
 
 ## [--- Day 12: Hot Springs ---](http://adventofcode.com/2023/day/12)
-
+Solved part 1 with a cool regex with the corresponding combinations, worked
+like a charm! Then part 2 came along and we needed a faster more scalable 
+solution, so need to sit down and (re)curse at it and throw in lru_cache in
+the mix. Easier said then done, but solved it after the lunch break.
