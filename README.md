@@ -74,4 +74,10 @@ solution, so need to sit down and (re)curse at it and throw in lru_cache in
 the mix. Easier said then done, but solved it after the lunch break.
 
 ## [--- Day 13: Point of Incidence ---](http://adventofcode.com/2023/day/13)
-
+My first idea worked (look for two similar strings next to each other, 
+and from the edge to that point check the symmetry). 
+For part 2 I first didn't account for the original reflection (so just 
+which came first was the "hit"), took some time to debug that.. maybe had 
+to think a little better. But once I got that it worked and runs in ~70ms.
+Don't like the big nested loops and flow, code is also not very explanatory..
+but it is what it is today (edited)
