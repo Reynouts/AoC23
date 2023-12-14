@@ -81,3 +81,6 @@ which came first was the "hit"), took some time to debug that.. maybe had
 to think a little better. But once I got that it worked and runs in ~70ms.
 Don't like the big nested loops and flow, code is also not very explanatory..
 but it is what it is today (edited)
+
+## [--- Day 14: Parabolic Reflector Dish ---](http://adventofcode.com/2023/day/14)
+
