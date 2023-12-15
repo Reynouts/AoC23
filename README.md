@@ -84,3 +84,6 @@ but it is what it is today (edited)
 
 ## [--- Day 14: Parabolic Reflector Dish ---](http://adventofcode.com/2023/day/14)
 
+
+## [--- Day 15: Lens Library ---](http://adventofcode.com/2023/day/15)
+
