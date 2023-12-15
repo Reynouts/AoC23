@@ -83,4 +83,16 @@ Don't like the big nested loops and flow, code is also not very explanatory..
 but it is what it is today (edited)
 
 ## [--- Day 14: Parabolic Reflector Dish ---](http://adventofcode.com/2023/day/14)
+Ugliest solution up till now! Didn't have time to finish it, so made it
+up today. Got stuck on part 2 for quite some time, thinking first the
+grid needed to be tilted to the north before calculating the score (as in
+part 1), so got all wrong score numbers. Took a while.. But after that did
+a cycle detection, again with a slow method.. took the scores instead of
+a representation of the rocks. It works and probably for the inputs in general,
+but could be refactored a lot.. but still need to do Day 15!
 
+## [--- Day 15: Lens Library ---](http://adventofcode.com/2023/day/15)
+Fun day, not very difficult, but the explanation of part 2 was big, had to
+read carefully! Just fiddled a bit with comprehensions to make it short, 
+but still some "classic" bigger flows going one. Kinda start to like the
+"else"-clause in a for-loop, instead of a "found" boolean or something.
