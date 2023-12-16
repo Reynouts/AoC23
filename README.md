@@ -96,3 +96,6 @@ Fun day, not very difficult, but the explanation of part 2 was big, had to
 read carefully! Just fiddled a bit with comprehensions to make it short, 
 but still some "classic" bigger flows going one. Kinda start to like the
 "else"-clause in a for-loop, instead of a "found" boolean or something.
+
+## [--- Day 16: The Floor Will Be Lava ---](http://adventofcode.com/2023/day/16)
+
