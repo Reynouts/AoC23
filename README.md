@@ -98,4 +98,7 @@ but still some "classic" bigger flows going one. Kinda start to like the
 "else"-clause in a for-loop, instead of a "found" boolean or something.
 
 ## [--- Day 16: The Floor Will Be Lava ---](http://adventofcode.com/2023/day/16)
-
+Nice mellow weekend day. Quick coding, slow runtime solution (4s or something), 
+spend more time puzzling today with "Darda" racetracks for/with my kids.
+But I like the style of these puzzles, I won't ask for more challenging ones,
+because that will result in a big hard puzzle tomorrow I guess ;-)
