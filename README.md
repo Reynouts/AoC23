@@ -102,3 +102,6 @@ Nice mellow weekend day. Quick coding, slow runtime solution (4s or something),
 spend more time puzzling today with "Darda" racetracks for/with my kids.
 But I like the style of these puzzles, I won't ask for more challenging ones,
 because that will result in a big hard puzzle tomorrow I guess ;-)
+
+## [--- Day 17: Clumsy Crucible ---](http://adventofcode.com/2023/day/17)
+
