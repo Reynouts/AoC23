@@ -43,12 +43,20 @@ def get_dictgridfromfile(file):
     return cells
 
 
-def get_gridfromfile(file):
+def identity(x):
+    return x
+
+
+def get_gridfromfile(file, func=identity):
     grid = []
     with open(file, 'r') as f:
         for line in f.read().splitlines():
-            grid.append([c for c in line])
+            grid.append([func(c) for c in line])
     return grid
+
+
+def get_intgridfromfile(file):
+    return get_gridfromfile(file, int)
 
 
 def print_griddict(griddict, frame, default=" "):

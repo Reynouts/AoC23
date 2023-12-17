@@ -104,4 +104,8 @@ But I like the style of these puzzles, I won't ask for more challenging ones,
 because that will result in a big hard puzzle tomorrow I guess ;-)
 
 ## [--- Day 17: Clumsy Crucible ---](http://adventofcode.com/2023/day/17)
-
+Tough day! Knew what to do, sort of, but got clumsy with the states in Dijkstra.
+So resulted in Dijksdrama, but could refactor a bit to get p1 and p2 in one
+solution which is kinda robust, also for different starting points. And is 
+slowwww. Hardest day to debug for me this year (till now, wait for the monday
+monster ;-))
