@@ -111,4 +111,9 @@ slowwww. Hardest day to debug for me this year (till now, wait for the monday
 monster ;-))
 
 ## [--- Day 18: Lavaduct Lagoon ---](http://adventofcode.com/2023/day/18)
-
+For part 1 decided to do floodfill from the outside without bugs, cause that 
+didn't work on day 10. Because I did some reading after day 10 about this 
+problem already (like many of you I guess), decided to go for understanding 
+that theory (shoelace + pick's) and just implemented it. Not too excited about 
+this one, because I don't see the real difference with day 10 (except everyone 
+has different bugs on different days..). 
