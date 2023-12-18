@@ -109,3 +109,6 @@ So resulted in Dijksdrama, but could refactor a bit to get p1 and p2 in one
 solution which is kinda robust, also for different starting points. And is 
 slowwww. Hardest day to debug for me this year (till now, wait for the monday
 monster ;-))
+
+## [--- Day 18: Lavaduct Lagoon ---](http://adventofcode.com/2023/day/18)
+
