@@ -119,4 +119,8 @@ this one, because I don't see the real difference with day 10 (except everyone
 has different bugs on different days..). 
 
 ## [--- Day 19: Aplenty ---](http://adventofcode.com/2023/day/19)
-
+Part 1 parsing was most of the fun. Part 2 just figuring out how this is
+a graph and it can be searched for the ends and adjust the ranges accordingly.
+That took me some time and along the way thought of some different approaches.
+Seems similar as day 5, but now I really do a search with adjusted ranges instead
+of starting at the end and backtracking it.
