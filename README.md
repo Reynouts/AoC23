@@ -117,3 +117,6 @@ problem already (like many of you I guess), decided to go for understanding
 that theory (shoelace + pick's) and just implemented it. Not too excited about 
 this one, because I don't see the real difference with day 10 (except everyone 
 has different bugs on different days..). 
+
+## [--- Day 19: Aplenty ---](http://adventofcode.com/2023/day/19)
+
