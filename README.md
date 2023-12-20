@@ -126,4 +126,8 @@ Seems similar as day 5, but now I really do a search with adjusted ranges instea
 of starting at the end and backtracking it.
 
 ## [--- Day 20: Pulse Propagation ---](http://adventofcode.com/2023/day/20)
-
+A lot of reading to do! Didn't take too much time, just follow the rules of
+the examples and it works. On the flipside; part 2 didn't even have a testcase,
+so it was looking for a clue in the input. That could be found by noting that
+the "con" sending to "rx" was dependent of 4 flips. So check when all flips are
+on by cycledetection and lcm and done!
