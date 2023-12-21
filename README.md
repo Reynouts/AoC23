@@ -131,3 +131,6 @@ the examples and it works. On the flipside; part 2 didn't even have a testcase,
 so it was looking for a clue in the input. That could be found by noting that
 the "con" sending to "rx" was dependent of 4 flips. So check when all flips are
 on by cycledetection and lcm and done!
+
+## [--- Day 21: Step Counter ---](http://adventofcode.com/2023/day/21)
+
