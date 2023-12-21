@@ -137,7 +137,7 @@ def get_neighbours(cell, cells, diag=True):
         heading = heading + ((1, 1), (-1, -1), (-1, 1), (1, -1))
     for h in heading:
         pos = cell[0] + h[0], cell[1] + h[1]
-        if type(cells) is dict:
+        if type(cells) is dict or type(cells) is set:
             if pos in cells:
                 neighbours.append(pos)
         else:

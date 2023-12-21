@@ -8,20 +8,13 @@ def process(signal, sender, destination, modules):
         return []
     if destination == "broadcaster":
         return [[0, destination, d] for d in modules[destination][1]]
-    if modules[destination][0] == "%":
-        if signal == 0:
-            if modules[destination][2]:
-                modules[destination][2] = 0
-                return [(0, destination, d) for d in modules[destination][1]]
-            else:
-                modules[destination][2] = 1
-                return [(1, destination, d) for d in modules[destination][1]]
+    if modules[destination][0] == "%" and signal == 0:
+        modules[destination][2] = 1 - modules[destination][2]
+        return [(modules[destination][2], destination, d) for d in modules[destination][1]]
     elif modules[destination][0] == "&":
         modules[destination][-1][sender] = signal
-        if all([modules[destination][-1][s] for s in modules[destination][-1]]):
-            return [(0, destination, d) for d in modules[destination][1]]
-        else:
-            return [(1, destination, d) for d in modules[destination][1]]
+        flipped = int(not all([modules[destination][-1][s] for s in modules[destination][-1]]))
+        return [(flipped, destination, d) for d in modules[destination][1]]
 
 
 def main():
@@ -48,10 +41,11 @@ def main():
             if cons_key in modules[module_key][1]:
                 modules[cons_key][3][module_key] = 0
 
-
     low, high = 0, 0
     cons = copy.deepcopy(modules[prev][-1])
     for press in range(10**10):
+        if press == 1000:
+            print("p1:", low*high)
         q = [(0, "", "broadcaster")]
         while q:
             if all(cons[v] != 0 for v in cons):
@@ -66,10 +60,6 @@ def main():
             calls = process(*current, modules)
             if calls:
                 q.extend(calls)
-
-        if press == 1000:
-            print("p1:", low*high)
-
 
 
 if __name__ == "__main__":

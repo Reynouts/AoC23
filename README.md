@@ -133,4 +133,14 @@ the "con" sending to "rx" was dependent of 4 flips. So check when all flips are
 on by cycledetection and lcm and done!
 
 ## [--- Day 21: Step Counter ---](http://adventofcode.com/2023/day/21)
-
+When reading the first part, I first didn't know why it was so elaborately 
+explained, just bfs/dfs, right? Almost.. but a small change, which took
+some adjustment. The second part was really difficult to extrapolate, 
+especially when just looking at the example. When later examining the input,
+the challenge changed. There was "corridors" from the starting point to the end
+of the grids in all directions. Also there was a wide "diamond" corridor.
+In this sparse grid and with these specifications, it became a bit clearer.
+Drawing the biiiiig diamond and shuffling with some length numbers it worked
+out. The idea from the input was not that hard, but get the details right took
+my quite some time. Without a sample input which was similar, it made it even
+more difficult to test, but with some smaller testcases, I got there finally.
