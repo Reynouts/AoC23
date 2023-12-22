@@ -144,3 +144,6 @@ Drawing the biiiiig diamond and shuffling with some length numbers it worked
 out. The idea from the input was not that hard, but get the details right took
 my quite some time. Without a sample input which was similar, it made it even
 more difficult to test, but with some smaller testcases, I got there finally.
+
+## [--- Day 22: Sand Slabs ---](http://adventofcode.com/2023/day/22)
+
