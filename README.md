@@ -137,7 +137,7 @@ When reading the first part, I first didn't know why it was so elaborately
 explained, just bfs/dfs, right? Almost.. but a small change, which took
 some adjustment. The second part was really difficult to extrapolate, 
 especially when just looking at the example. When later examining the input,
-the challenge changed. There was "corridors" from the starting point to the end
+the challenge changed. There were "corridors" from the starting point to the end
 of the grids in all directions. Also there was a wide "diamond" corridor.
 In this sparse grid and with these specifications, it became a bit clearer.
 Drawing the biiiiig diamond and shuffling with some length numbers it worked
@@ -146,7 +146,9 @@ my quite some time. Without a sample input which was similar, it made it even
 more difficult to test, but with some smaller testcases, I got there finally.
 
 ## [--- Day 22: Sand Slabs ---](http://adventofcode.com/2023/day/22)
-
+Family fever weekend. Still need to do the second part, started with it, but really
+need to rest!
 
 ## [--- Day 23: A Long Walk ---](http://adventofcode.com/2023/day/23)
-
+Family fever weekend, but managed to finish it with a very boring bfs method which
+is really slow. Took some time to figure out how to simplify the grid to a graph.

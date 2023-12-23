@@ -49,6 +49,7 @@ def main():
         q = [(0, "", "broadcaster")]
         while q:
             if all(cons[v] != 0 for v in cons):
+                print(cons.values())
                 print("p2:", lcm(*cons.values()))
                 return
             for n in modules[prev][-1]:
