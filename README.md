@@ -147,3 +147,6 @@ more difficult to test, but with some smaller testcases, I got there finally.
 
 ## [--- Day 22: Sand Slabs ---](http://adventofcode.com/2023/day/22)
 
+
+## [--- Day 23: A Long Walk ---](http://adventofcode.com/2023/day/23)
+
