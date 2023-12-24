@@ -152,3 +152,6 @@ need to rest!
 ## [--- Day 23: A Long Walk ---](http://adventofcode.com/2023/day/23)
 Family fever weekend, but managed to finish it with a very boring bfs method which
 is really slow. Took some time to figure out how to simplify the grid to a graph.
+
+## [--- Day 24: Never Tell Me The Odds ---](http://adventofcode.com/2023/day/24)
+
