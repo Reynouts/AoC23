@@ -147,11 +147,18 @@ more difficult to test, but with some smaller testcases, I got there finally.
 
 ## [--- Day 22: Sand Slabs ---](http://adventofcode.com/2023/day/22)
 Family fever weekend. Still need to do the second part, started with it, but really
-need to rest!
+need to rest! Catched up: nice puzzle. I am using a recursive approach for p2, which works
+great with the data I could gather in P1 (which I didn't have yet, but could easily extend)
 
 ## [--- Day 23: A Long Walk ---](http://adventofcode.com/2023/day/23)
 Family fever weekend, but managed to finish it with a very boring bfs method which
 is really slow. Took some time to figure out how to simplify the grid to a graph.
 
 ## [--- Day 24: Never Tell Me The Odds ---](http://adventofcode.com/2023/day/24)
-
+Ah, there it is, the Z3/Sympy/whatever math library you have: throw it at
+this problem! I have been there: stuck for hours and hours with these problems,
+math way above my head. Not this year! Used Sympy for p2 to change it up. One
+puzzle left. Difficult puzzles with diffculties with family fever these last
+days, made this definitely one of the harder years for me and not so enjoyable
+as earlier years. Also because of a lot of repetition and maybe "have seen it all"-
+feeling. I was not as engaged as before. We'll see what next year brings.
