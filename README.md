@@ -162,3 +162,6 @@ puzzle left. Difficult puzzles with diffculties with family fever these last
 days, made this definitely one of the harder years for me and not so enjoyable
 as earlier years. Also because of a lot of repetition and maybe "have seen it all"-
 feeling. I was not as engaged as before. We'll see what next year brings.
+
+## [--- Day 25: Snowverload ---](http://adventofcode.com/2023/day/25)
+
