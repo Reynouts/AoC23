@@ -164,4 +164,6 @@ as earlier years. Also because of a lot of repetition and maybe "have seen it al
 feeling. I was not as engaged as before. We'll see what next year brings.
 
 ## [--- Day 25: Snowverload ---](http://adventofcode.com/2023/day/25)
-
+Just for once handed it over to NetworkX. It's a maxflow/mincut problem, and networkX
+(or iGraph!) can handle this for you, so why not! Off to bed, unfortunately, with
+pneumonia for me, so need some rest!
