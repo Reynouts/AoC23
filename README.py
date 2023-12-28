@@ -7,7 +7,7 @@ def main():
     with open('README.md', 'r') as f:
         readme = f.read()
 
-    for i in range(1, date.today().day+1):
+    for i in range(1, max(date.today().day+1, 25)):
         url = "http://adventofcode.com/2023/day/" + str(i)
         if(url not in readme):
             print(url)
