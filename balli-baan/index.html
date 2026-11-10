@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Balli Baan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&family=Lexend:wght@400;600&display=swap">
+<style>
+/* Layout: a full-bleed 3D sandbox; toy-plastic HUD pinned to the corners, a tool tray along the bottom edge. */
+:root {
+  --sky: #a8d8ec;
+  --panel: #fff8ec;
+  --ink: #3a2817;
+  --ink-soft: #7a6450;
+  --bucket: #e2452f;
+  --bucket-dark: #b2311d;
+  --spade: #2b6cc4;
+  --sun: #f5c242;
+  --line: rgba(58, 40, 23, .16);
+  --shadow: 0 3px 0 rgba(58, 40, 23, .18), 0 10px 24px rgba(58, 40, 23, .14);
+  --font-display: "Sniglet", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--sky); color: var(--ink); font-family: var(--font-body); font-size: 14px; }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#view.hand { cursor: none; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--spade); outline-offset: 2px; }
+
+.corner { position: fixed; z-index: 2; display: flex; flex-direction: column; gap: 10px; }
+.tl { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); }
+.tr { top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); align-items: flex-end; }
+
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: .9; letter-spacing: -.5px; margin: 0;
+  color: var(--ink); text-shadow: 0 2px 0 rgba(255,255,255,.7); }
+.brand span { color: var(--bucket); }
+.levels { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 0; background: var(--panel); border-radius: 999px; padding: 5px 11px 5px 9px; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; }
+.chip .n { font-family: var(--font-display); font-weight: 800; font-size: 15px; }
+.chip .best { color: var(--sun); letter-spacing: 1px; font-size: 11px; text-shadow: 0 1px 0 rgba(58,40,23,.35); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+
+.runbox { background: var(--panel); border-radius: 18px; box-shadow: var(--shadow); padding: 8px; display: flex; align-items: center; gap: 12px; }
+.meter { display: flex; flex-direction: column; align-items: flex-end; padding-left: 6px; }
+.time { font-family: var(--font-display); font-weight: 800; font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1; }
+.stars { display: flex; gap: 3px; margin-top: 3px; }
+.stars i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); display: block; transition: background .2s, transform .2s; }
+.stars i.on { background: var(--sun); transform: scale(1.15); box-shadow: inset 0 -2px 0 rgba(0,0,0,.15); }
+.roll { border: 0; background: var(--bucket); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 20px;
+  padding: 10px 18px; border-radius: 14px; box-shadow: inset 0 -4px 0 var(--bucket-dark); min-width: 112px; }
+.roll:active { transform: translateY(2px); box-shadow: inset 0 -2px 0 var(--bucket-dark); }
+.roll.stop { background: var(--ink); box-shadow: inset 0 -4px 0 #1d140b; }
+
+.dock { position: fixed; z-index: 2; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--panel); border-radius: 20px; box-shadow: var(--shadow); padding: 8px; display: flex; align-items: stretch; gap: 6px;
+  width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; flex-wrap: wrap; justify-content: center; }
+.tool { border: 2px solid transparent; background: transparent; border-radius: 14px; width: 68px; padding: 6px 4px 5px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; font-weight: 600; font-size: 12px; position: relative; }
+.tool svg { width: 30px; height: 30px; stroke: var(--ink); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tool kbd { position: absolute; top: 3px; right: 6px; font: 600 10px var(--font-body); color: var(--ink-soft); }
+.tool:hover { background: rgba(245,194,66,.25); }
+.tool[aria-pressed="true"] { background: var(--sun); border-color: var(--ink); }
+.sep { width: 1px; background: var(--line); margin: 4px 2px; }
+.size { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 0 6px; font-size: 12px; font-weight: 600; }
+.size input { width: 96px; accent-color: var(--spade); }
+.small { border: 0; background: transparent; border-radius: 12px; padding: 6px 8px; font-size: 12px; font-weight: 600;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--ink); }
+.small:hover { background: rgba(58,40,23,.07); }
+.small svg { width: 20px; height: 20px; stroke: var(--ink); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+.hint { position: fixed; z-index: 2; left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  max-width: 300px; background: var(--panel); border-radius: 14px 14px 14px 4px; box-shadow: var(--shadow); padding: 10px 12px; line-height: 1.45; font-size: 13px; }
+.hint b { font-family: var(--font-display); font-weight: 800; font-size: 15px; display: block; margin-bottom: 2px; }
+.hint .keys { color: var(--ink-soft); font-size: 11.5px; margin-top: 6px; }
+
+.result { position: fixed; z-index: 3; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.card { pointer-events: auto; background: var(--panel); border-radius: 22px; box-shadow: var(--shadow); padding: 20px 22px; text-align: center;
+  width: min(320px, calc(100vw - 32px)); animation: pop .35s cubic-bezier(.2,1.4,.4,1); }
+.card h2 { font-family: var(--font-display); font-weight: 800; font-size: 30px; margin: 0 0 4px; text-wrap: balance; }
+.card p { margin: 0 0 12px; color: var(--ink-soft); }
+.card .big-stars { font-size: 34px; letter-spacing: 6px; color: var(--sun); text-shadow: 0 2px 0 rgba(58,40,23,.3); margin-bottom: 8px; }
+.card .big-stars .off { color: var(--line); text-shadow: none; }
+.card .row { display: flex; gap: 8px; justify-content: center; }
+.card .row button { border: 0; border-radius: 12px; padding: 9px 16px; font-weight: 600; background: rgba(58,40,23,.08); }
+.card .row button.primary { background: var(--spade); color: #fff; }
+@keyframes pop { from { transform: scale(.8); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .card { animation: none; } }
+
+@media (max-width: 640px) {
+  .brand { font-size: 26px; }
+  .chip .name { display: none; }
+  .chip { padding: 5px 10px; }
+  .roll { font-size: 17px; padding: 8px 12px; min-width: 84px; }
+  .time { font-size: 18px; }
+  .tool { width: 56px; font-size: 11px; }
+  .tool svg { width: 24px; height: 24px; }
+  .size input { width: 72px; }
+  .hint { bottom: auto; top: calc(118px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); font-size: 12px; }
+  .hint .keys { display: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="view" aria-label="Sandbox. Drag to shape the sand."></canvas>
+
+<div class="corner tl">
+  <h1 class="brand">balli <span>baan</span></h1>
+  <div class="levels" id="levels" role="group" aria-label="Choose a sandbox"></div>
+</div>
+
+<div class="corner tr">
+  <div class="runbox">
+    <div class="meter">
+      <div class="time" id="time">0.0s</div>
+      <div class="stars" id="stars" aria-label="Stars this run"><i></i><i></i><i></i></div>
+    </div>
+    <button class="roll" id="roll">Roll!</button>
+  </div>
+</div>
+
+<div class="hint" id="hint"><b id="hintTitle"></b><span id="hintText"></span>
+  <div class="keys">Right-drag or two fingers to turn · scroll or pinch to zoom · keys 1–4 pick a hand · space rolls</div>
+</div>
+
+<div class="dock" role="toolbar" aria-label="Hands">
+  <button class="tool" data-tool="dig" aria-pressed="true" title="Dig: scoop sand away and push it up into banks"><kbd>1</kbd>
+    <svg viewBox="0 0 32 32"><path d="M4 12c4 0 5 9 12 9s8-9 12-9"/><path d="M9 26h14"/><circle cx="11" cy="7" r="1.5"/><circle cx="20" cy="5" r="1.5"/></svg>Dig</button>
+  <button class="tool" data-tool="pile" aria-pressed="false" title="Pile: drop sand to build walls and hills"><kbd>2</kbd>
+    <svg viewBox="0 0 32 32"><path d="M3 26c5 0 7-12 13-12s8 12 13 12"/><path d="M16 4v6M13 7l3 3 3-3"/></svg>Pile</button>
+  <button class="tool" data-tool="smooth" aria-pressed="false" title="Smooth: pat the sand flat"><kbd>3</kbd>
+    <svg viewBox="0 0 32 32"><path d="M3 12c3-3 5 3 8 0s5 3 8 0 5 3 8 0"/><path d="M3 22h26"/></svg>Smooth</button>
+  <button class="tool" data-tool="tunnel" aria-pressed="false" title="Tunnel: one finger carves a gently sloping track, underground when the sand is deep enough"><kbd>4</kbd>
+    <svg viewBox="0 0 32 32"><path d="M2 26h28"/><path d="M5 26V18a11 9 0 0 1 22 0v8"/><path d="M11 26v-6a5 4 0 0 1 10 0v6"/></svg>Tunnel</button>
+  <div class="sep" aria-hidden="true"></div>
+  <label class="size" for="size">Hand size<input id="size" type="range" min="0.4" max="1.4" step="0.05" value="0.75"></label>
+  <div class="sep" aria-hidden="true"></div>
+  <button class="small" id="undo" title="Undo last stroke (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Undo</button>
+  <button class="small" id="fresh" title="Smooth the whole sandbox back to the start"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>New sand</button>
+</div>
+
+<div class="result" id="result" hidden>
+  <div class="card" role="dialog" aria-live="polite">
+    <h2 id="resTitle"></h2>
+    <div class="big-stars" id="resStars"></div>
+    <p id="resText"></p>
+    <div class="row"><button id="again">Try again</button><button class="primary" id="next">Next sandbox</button></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+
+/* ---------------- world constants ---------------- */
+const N = 128, M = N + 1, W = 16, HALF = W / 2, CS = W / N;
+const BASE = 1.5, FLOOR = 0.05, FRAME_H = 2.1, MAXH = 3.8, FRAME_T = 0.45;
+const BALL_R = 0.2, ROOF = 0.18, CLEAR = 0.9, CAV_MIN = 2 * BALL_R + ROOF + 0.03;
+const TALUS = 1.25 * CS;            // steepest stable step between neighbours (damp sand holds ~51°)
+const G = 14, DRAG = 0.3, ROLL_FR = 0.035, BOUNCE = 0.15;
+const CUP_R = 0.34, CUP_DEPTH = 0.45;
+
+// Two heightfields: ground is what the ball rolls on, top is the visible surface.
+// Where top > ground there is a tunnel: open space between ground and (top - ROOF).
+const ground = new Float32Array(M * M), top = new Float32Array(M * M);
+const lock = new Uint8Array(M * M), speck = new Float32Array(M * M);
+for (let i = 0; i < speck.length; i++) speck[i] = Math.random();
+const isTun = i => top[i] - ground[i] > 0.02;
+
+function hAt(arr, x, z) {
+  const gx = (x + HALF) / CS, gz = (z + HALF) / CS;
+  if (gx < 0 || gz < 0 || gx > N || gz > N) {
+    return (Math.abs(x) < HALF + FRAME_T && Math.abs(z) < HALF + FRAME_T) ? FRAME_H : -50;
+  }
+  const ix = Math.min(N - 1, gx | 0), iz = Math.min(N - 1, gz | 0), fx = gx - ix, fz = gz - iz, i = iz * M + ix;
+  return arr[i] * (1 - fx) * (1 - fz) + arr[i + 1] * fx * (1 - fz) + arr[i + M] * (1 - fx) * fz + arr[i + M + 1] * fx * fz;
+}
+function normalAt(x, z, out) {
+  const e = CS * 0.8;
+  const hx = (hAt(ground, x + e, z) - hAt(ground, x - e, z)) / (2 * e);
+  const hz = (hAt(ground, x, z + e) - hAt(ground, x, z - e)) / (2 * e);
+  return out.set(-hx, 1, -hz).normalize();
+}
+
+/* ---------------- renderer & scene ---------------- */
+const canvas = $('#view');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xa8d8ec);
+scene.fog = new THREE.Fog(0xa8d8ec, 38, 95);
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 220);
+
+scene.add(new THREE.HemisphereLight(0xdcefff, 0x8a6d45, 0.5));
+const sun = new THREE.DirectionalLight(0xfff0d4, 0.72);
+sun.position.set(-9, 16, 7);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, near: 1, far: 50 });
+sun.shadow.bias = -0.0006;
+sun.shadow.normalBias = 0.03;
+scene.add(sun);
+
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.MeshStandardMaterial({ color: 0x86b86a, roughness: 1 }));
+grass.rotation.x = -Math.PI / 2; grass.position.y = 0; grass.receiveShadow = true; scene.add(grass);
+
+const wood = new THREE.MeshStandardMaterial({ color: 0xb98552, roughness: 0.85 });
+const woodTop = new THREE.MeshStandardMaterial({ color: 0xcf9a62, roughness: 0.8 });
+{
+  const hgt = FRAME_H, y = hgt / 2;
+  const mk = (w, d, x, z) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, hgt, d), [wood, wood, woodTop, wood, wood, wood]);
+    m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; scene.add(m);
+  };
+  mk(W + 2 * FRAME_T, FRAME_T, 0, -(HALF + FRAME_T / 2));
+  mk(W + 2 * FRAME_T, FRAME_T, 0, HALF + FRAME_T / 2);
+  mk(FRAME_T, W, -(HALF + FRAME_T / 2), 0);
+  mk(FRAME_T, W, HALF + FRAME_T / 2, 0);
+}
+
+/* ---------------- terrain meshes ---------------- */
+function makeGrid() {
+  const g = new THREE.BufferGeometry();
+  const pos = new Float32Array(M * M * 3);
+  for (let z = 0; z < M; z++) for (let x = 0; x < M; x++) {
+    const i = z * M + x; pos[i * 3] = x * CS - HALF; pos[i * 3 + 2] = z * CS - HALF;
+  }
+  const idx = new Uint16Array(N * N * 6); let k = 0;
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
+    const a = z * M + x, b = a + 1, c = a + M, d = c + 1;
+    idx[k++] = a; idx[k++] = c; idx[k++] = b; idx[k++] = b; idx[k++] = c; idx[k++] = d;
+  }
+  g.setIndex(new THREE.BufferAttribute(idx, 1));
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(M * M * 3), 3));
+  g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(M * M * 3), 3));
+  return g;
+}
+const geoG = makeGrid(), geoR = makeGrid();
+geoR.setAttribute('keep', new THREE.BufferAttribute(new Float32Array(M * M), 1));
+const sandMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 });
+const roofMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, side: THREE.DoubleSide });
+roofMat.onBeforeCompile = sh => {
+  sh.vertexShader = 'attribute float keep;\nvarying float vKeep;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvKeep = keep;');
+  sh.fragmentShader = 'varying float vKeep;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vKeep < 0.5) discard;');
+};
+const groundMesh = new THREE.Mesh(geoG, sandMat), roofMesh = new THREE.Mesh(geoR, roofMat);
+for (const m of [groundMesh, roofMesh]) { m.receiveShadow = m.castShadow = true; m.frustumCulled = false; scene.add(m); }
+
+function sandColor(h, s, shade, out, o) {
+  const wet = Math.min(1, Math.max(0, (BASE - h) / 1.3)), hi = Math.min(1, Math.max(0, (h - BASE) / 1.6)) * 0.5;
+  let r = 0.93 + (0.64 - 0.93) * wet, g = 0.80 + (0.49 - 0.80) * wet, b = 0.58 + (0.32 - 0.58) * wet;
+  r += (0.97 - r) * hi; g += (0.87 - g) * hi; b += (0.68 - b) * hi;
+  const k = (0.93 + 0.12 * s) * shade;
+  out[o] = r * k; out[o + 1] = g * k; out[o + 2] = b * k;
+}
+function writeNormals(h, nor) {
+  for (let z = 0; z < M; z++) for (let x = 0; x < M; x++) {
+    const i = z * M + x;
+    const l = h[x > 0 ? i - 1 : i], r = h[x < N ? i + 1 : i], d = h[z > 0 ? i - M : i], u = h[z < N ? i + M : i];
+    let nx = l - r, ny = 2 * CS, nz = d - u; const len = Math.hypot(nx, ny, nz);
+    nor[i * 3] = nx / len; nor[i * 3 + 1] = ny / len; nor[i * 3 + 2] = nz / len;
+  }
+}
+let dirty = true;
+function rebuild() {
+  const pg = geoG.attributes.position.array, cg = geoG.attributes.color.array;
+  const pr = geoR.attributes.position.array, cr = geoR.attributes.color.array, kr = geoR.attributes.keep.array;
+  for (let z = 0; z < M; z++) for (let x = 0; x < M; x++) {
+    const i = z * M + x, tun = isTun(i);
+    pg[i * 3 + 1] = ground[i];
+    sandColor(ground[i], speck[i], tun ? 0.62 : 1, cg, i * 3);
+    let keep = tun ? 1 : 0, lip = -1;
+    if (!tun) {
+      for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+        const xx = x + dx, zz = z + dz; if (xx < 0 || zz < 0 || xx > N || zz > N) continue;
+        const j = zz * M + xx;
+        if (!isTun(j)) continue;
+        if (top[i] >= top[j] - CLEAR * 0.5) keep = 1; else lip = Math.max(lip, top[j]);
+      }
+    }
+    kr[i] = keep;
+    // next to a tunnel mouth the roof runs on flat and is cut off halfway: a clean overhang
+    pr[i * 3 + 1] = tun ? top[i] : keep ? top[i] - 0.003 : lip > 0 ? lip : ground[i] - 0.25;
+    sandColor(top[i], speck[i], 1, cr, i * 3);
+  }
+  writeNormals(ground, geoG.attributes.normal.array);
+  writeNormals(top, geoR.attributes.normal.array);
+  for (const g of [geoG, geoR]) { g.attributes.position.needsUpdate = g.attributes.normal.needsUpdate = g.attributes.color.needsUpdate = true; }
+  geoR.attributes.keep.needsUpdate = true;
+  dirty = false;
+}
+
+/* ---------------- props: pipe, cup, flag, rocks, shells ---------------- */
+const red = new THREE.MeshStandardMaterial({ color: 0xe2452f, roughness: 0.45, side: THREE.DoubleSide });
+const white = new THREE.MeshStandardMaterial({ color: 0xf8f4ea, roughness: 0.5, side: THREE.DoubleSide });
+const pipe = new THREE.Group();
+{
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 1.1, 28, 1, true), red); tube.position.y = 0.55;
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.04, 8, 28), red); lip.rotation.x = Math.PI / 2; lip.position.y = 1.1;
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.4, 8), new THREE.MeshStandardMaterial({ color: 0x8a5a33 }));
+  leg.position.set(0.3, -0.4, 0);
+  for (const m of [tube, lip, leg]) { m.castShadow = true; pipe.add(m); }
+  scene.add(pipe);
+}
+const cup = new THREE.Group();
+{
+  const wall = new THREE.Mesh(new THREE.CylinderGeometry(CUP_R, CUP_R, CUP_DEPTH, 28, 1, true), white); wall.position.y = -CUP_DEPTH / 2;
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(CUP_R, 0.035, 8, 28), white); rim.rotation.x = Math.PI / 2; rim.position.y = 0.01;
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.7, 8), white); pole.position.set(CUP_R + 0.12, 0.8, 0);
+  const shape = new THREE.Shape(); shape.moveTo(0, 0); shape.lineTo(0.62, -0.2); shape.lineTo(0, -0.42); shape.lineTo(0, 0);
+  const flag = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshStandardMaterial({ color: 0xf5c242, side: THREE.DoubleSide }));
+  flag.position.set(CUP_R + 0.13, 1.62, 0); cup.userData.flag = flag;
+  for (const m of [wall, rim, pole, flag]) { m.castShadow = true; cup.add(m); }
+  scene.add(cup);
+}
+const propGroup = new THREE.Group(); scene.add(propGroup);
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x8d8a83, roughness: 0.9, flatShading: true });
+const shellMat = new THREE.MeshStandardMaterial({ color: 0xf6a99a, roughness: 0.55, flatShading: true });
+const shellGeo = new THREE.ConeGeometry(0.2, 0.09, 9, 1); shellGeo.translate(0, 0.045, 0);
+
+/* ---------------- ball ---------------- */
+const ballTex = (() => {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d');
+  x.fillStyle = '#2b6cc4'; x.fillRect(0, 0, 256, 128);
+  x.fillStyle = '#f5c242'; x.fillRect(0, 50, 256, 28);
+  x.fillStyle = '#fff'; x.fillRect(0, 58, 256, 6);
+  return new THREE.CanvasTexture(c);
+})();
+const ballMesh = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 32, 20), new THREE.MeshStandardMaterial({ map: ballTex, roughness: 0.18, metalness: 0.05 }));
+ballMesh.castShadow = true; scene.add(ballMesh);
+const ghost = new THREE.Mesh(new THREE.SphereGeometry(BALL_R * 1.05, 20, 12),
+  new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthTest: false, depthWrite: false }));
+ghost.renderOrder = 10; scene.add(ghost);
+const ball = { pos: new THREE.Vector3(), vel: new THREE.Vector3(), contact: false, inTunnel: false, still: 0 };
+
+/* ---------------- the hand ---------------- */
+const hand = (() => {
+  const skin = new THREE.MeshStandardMaterial({ color: 0xf7d3b6, roughness: 0.55, emissive: 0x3a1c0c, emissiveIntensity: 0.25 });
+  const sleeve = new THREE.MeshStandardMaterial({ color: 0x2b6cc4, roughness: 0.7 });
+  const outer = new THREE.Group(), inner = new THREE.Group(); outer.add(inner);
+  const add = (parent, geo, setup) => { const m = new THREE.Mesh(geo, skin); setup(m); m.castShadow = true; parent.add(m); return m; };
+  add(inner, new THREE.SphereGeometry(1, 20, 14), m => m.scale.set(0.27, 0.09, 0.3));
+  const arm = new THREE.Group(); arm.position.set(0, 0.02, 0.18); inner.add(arm);
+  add(arm, new THREE.CylinderGeometry(0.11, 0.14, 1.0, 14), m => { m.rotation.x = Math.PI / 2; m.position.z = 0.5; });
+  const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.16, 0.5, 16), sleeve);
+  cuff.rotation.x = Math.PI / 2; cuff.position.z = 1.2; cuff.castShadow = true; arm.add(cuff);
+  const fingers = [];
+  const mkFinger = (x, z, len, yaw) => {
+    const pivot = new THREE.Group(); pivot.position.set(x, 0, z); pivot.rotation.y = yaw; inner.add(pivot);
+    const seg = len / 2, geo = new THREE.CylinderGeometry(0.046, 0.05, seg, 10), tip = new THREE.SphereGeometry(0.047, 10, 8);
+    add(pivot, geo, m => { m.rotation.x = -Math.PI / 2; m.position.z = -seg / 2; });
+    const joint = new THREE.Group(); joint.position.z = -seg; pivot.add(joint);
+    add(joint, geo, m => { m.rotation.x = -Math.PI / 2; m.position.z = -seg / 2; });
+    add(joint, tip, m => { m.position.z = -seg; });
+    fingers.push({ pivot, joint });
+  };
+  mkFinger(-0.24, -0.02, 0.24, 0.75);   // thumb
+  mkFinger(-0.15, -0.24, 0.30, 0.05);
+  mkFinger(-0.05, -0.27, 0.33, 0);
+  mkFinger(0.06, -0.25, 0.30, -0.04);
+  mkFinger(0.16, -0.2, 0.24, -0.1);
+  scene.add(outer);
+  const poses = {
+    dig:    { tilt: -0.55, curl: [0.3, 0.55, 0.55, 0.55, 0.6], z: 0.32, lift: 0.18 },
+    pile:   { tilt: -0.12, curl: [0.7, 1.1, 1.1, 1.1, 1.1], z: 0.05, lift: 0.12 },
+    smooth: { tilt: -0.04, curl: [0.08, 0.04, 0.04, 0.04, 0.06], z: 0.12, lift: 0.07 },
+    tunnel: { tilt: -1.05, curl: [1.0, 0.0, 1.6, 1.6, 1.6], z: 0.3, lift: 0.5 },
+  };
+  const cur = { tilt: 0, curl: [0, 0, 0, 0, 0], z: 0, lift: 0 };
+  return { outer, inner, arm, fingers, poses, cur };
+})();
+
+/* ---------------- sand particles ---------------- */
+const PN = 500;
+const pPos = new Float32Array(PN * 3).fill(-100), pVel = new Float32Array(PN * 3), pLife = new Float32Array(PN);
+const pGeo = new THREE.BufferGeometry(); pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xd8b680, size: 0.06 }));
+particles.frustumCulled = false; scene.add(particles);
+let pNext = 0;
+function spray(x, y, z, n, spread, up) {
+  for (let k = 0; k < n; k++) {
+    const i = pNext; pNext = (pNext + 1) % PN; const a = Math.random() * Math.PI * 2, s = spread * (0.4 + Math.random());
+    pPos[i * 3] = x + Math.cos(a) * 0.15; pPos[i * 3 + 1] = y + 0.05; pPos[i * 3 + 2] = z + Math.sin(a) * 0.15;
+    pVel[i * 3] = Math.cos(a) * s; pVel[i * 3 + 1] = up * (0.5 + Math.random()); pVel[i * 3 + 2] = Math.sin(a) * s; pLife[i] = 1.2;
+  }
+}
+function stepParticles(dt) {
+  for (let i = 0; i < PN; i++) {
+    if (pLife[i] <= 0) continue;
+    pLife[i] -= dt; pVel[i * 3 + 1] -= 9 * dt;
+    pPos[i * 3] += pVel[i * 3] * dt; pPos[i * 3 + 1] += pVel[i * 3 + 1] * dt; pPos[i * 3 + 2] += pVel[i * 3 + 2] * dt;
+    if (pLife[i] <= 0 || pPos[i * 3 + 1] < hAt(top, pPos[i * 3], pPos[i * 3 + 2])) { pLife[i] = 0; pPos[i * 3 + 1] = -100; }
+  }
+  pGeo.attributes.position.needsUpdate = true;
+}
+
+/* ---------------- sculpting ---------------- */
+let tool = 'dig', brushR = 0.75;
+const tunnelR = () => Math.min(0.75, Math.max(0.38, brushR * 0.55));
+function forDisc(cx, cz, R, fn) {
+  const x0 = Math.max(0, Math.floor((cx - R + HALF) / CS)), x1 = Math.min(N, Math.ceil((cx + R + HALF) / CS));
+  const z0 = Math.max(0, Math.floor((cz - R + HALF) / CS)), z1 = Math.min(N, Math.ceil((cz + R + HALF) / CS));
+  for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) {
+    const dx = x * CS - HALF - cx, dz = z * CS - HALF - cz, d = Math.hypot(dx, dz);
+    if (d <= R) fn(z * M + x, d, dx, dz, x, z);
+  }
+}
+function raise(i, a) {           // add sand on top; keeps a tunnel underneath intact
+  if (lock[i]) return;
+  const tun = isTun(i);
+  top[i] = Math.min(MAXH, top[i] + a);
+  if (!tun) ground[i] = top[i];
+}
+function relax(cx, cz, R, iters) {
+  const x0 = Math.max(0, Math.floor((cx - R + HALF) / CS)), x1 = Math.min(N - 1, Math.ceil((cx + R + HALF) / CS));
+  const z0 = Math.max(0, Math.floor((cz - R + HALF) / CS)), z1 = Math.min(N - 1, Math.ceil((cz + R + HALF) / CS));
+  for (let it = 0; it < iters; it++) for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) {
+    const i = z * M + x; if (lock[i] || isTun(i)) continue;
+    for (const j of [i + 1, i + M]) {
+      if (lock[j] || isTun(j)) continue;
+      const d = top[i] - top[j];
+      if (d > TALUS) { const m = (d - TALUS) * 0.3; top[i] -= m; top[j] += m; }
+      else if (d < -TALUS) { const m = (-d - TALUS) * 0.3; top[i] += m; top[j] -= m; }
+      ground[i] = top[i]; ground[j] = top[j];
+    }
+  }
+}
+function dig(cx, cz, dt, dir) {
+  const R = brushR; let removed = 0;
+  forDisc(cx, cz, R, (i, d) => {
+    if (lock[i]) return;
+    const f = (1 - (d / R) ** 2) ** 2, a = 1.7 * dt * f;
+    const nt = Math.max(FLOOR, top[i] - a); removed += top[i] - nt; top[i] = nt;
+    if (ground[i] > top[i]) ground[i] = top[i];
+    else if (top[i] - ground[i] > 0.001 && top[i] - ground[i] < CLEAR * 0.6) { removed += top[i] - ground[i]; top[i] = ground[i]; } // roof caves in
+  });
+  if (removed <= 0) return;
+  // the sand the hand pushes away piles up in banks, mostly to the sides of the stroke
+  const ring = []; let sum = 0;
+  forDisc(cx, cz, R * 1.65, (i, d, dx, dz) => {
+    if (d <= R || lock[i]) return;
+    let w = Math.sin(Math.PI * (d - R) / (R * 0.65));
+    if (dir) { const s = Math.abs(dir.x * dz - dir.z * dx) / d; w *= 0.1 + 0.9 * s; }
+    ring.push(i, w); sum += w;
+  });
+  for (let k = 0; k < ring.length; k += 2) raise(ring[k], removed * 0.9 * ring[k + 1] / sum);
+  if (Math.random() < 0.6) spray(cx, hAt(top, cx, cz), cz, 3, 1.4, 2.2);
+}
+function pile(cx, cz, dt) {
+  const R = brushR;
+  forDisc(cx, cz, R, (i, d) => raise(i, 1.1 * dt * (1 - (d / R) ** 2) ** 2));
+  if (Math.random() < 0.5) spray(cx, hAt(top, cx, cz) + 0.5, cz, 2, 0.3, -0.5);
+}
+const snap = new Float32Array(M * M);
+function smooth(cx, cz, dt) {
+  const R = brushR;
+  forDisc(cx, cz, R + CS * 2, i => { snap[i] = top[i]; });
+  forDisc(cx, cz, R, (i, d, dx, dz, x, z) => {
+    if (lock[i] || isTun(i) || x === 0 || z === 0 || x === N || z === N) return;
+    const avg = (snap[i - 1] + snap[i + 1] + snap[i - M] + snap[i + M]) / 4;
+    const k = Math.min(1, 7 * dt * (1 - (d / R) ** 2));
+    top[i] += (avg - top[i]) * k; ground[i] = top[i];
+  });
+}
+const WALL = 1.05;                  // slope of the runway's side walls
+function carveTunnel(cx, cz, target, dir, orig = top) {
+  const rt = tunnelR();
+  const open = hAt(orig, cx, cz) - target < CLEAR;    // not enough sand overhead (before this stroke): an open runway
+  forDisc(cx, cz, open ? rt + 1.6 : rt, (i, d, dx, dz) => {
+    if (lock[i]) return;
+    if (d > rt) {                     // shoulders: open runways get smooth sloping walls (sides and behind, never ahead)
+      if (isTun(i) || (dir && (dx * dir.x + dz * dir.z) > 0.2 * d)) return;
+      const fw = Math.max(FLOOR, target + (d - rt) * WALL);
+      if (top[i] > fw) top[i] = ground[i] = fw;
+      return;
+    }
+    const fl = Math.max(FLOOR, target - 0.13 * (1 - (d / rt) ** 2));
+    if (ground[i] <= fl) return;
+    if (!open && top[i] - fl >= CLEAR) ground[i] = fl;  // deep enough: go underground
+    else { ground[i] = fl; top[i] = fl; }               // shallow: open runway
+  });
+}
+
+// cup sinks along with the sand around it
+const goal = { x: 0, z: 0, rim: BASE, floor: BASE - CUP_DEPTH };
+function updateCup() {
+  let rim = Infinity;
+  forDisc(goal.x, goal.z, CUP_R + 0.2, (i, d) => { if (d > CUP_R + 0.03) rim = Math.min(rim, top[i]); });
+  if (!isFinite(rim)) rim = BASE;
+  goal.rim = rim; goal.floor = Math.max(FLOOR, rim - CUP_DEPTH);
+  forDisc(goal.x, goal.z, CUP_R, i => { lock[i] = 1; top[i] = ground[i] = Math.max(FLOOR, rim - CUP_DEPTH); });
+  cup.position.set(goal.x, rim, goal.z);
+}
+
+/* undo */
+const undoStack = [];
+function pushUndo() { undoStack.push([ground.slice(), top.slice()]); if (undoStack.length > 30) undoStack.shift(); }
+function undo() { const s = undoStack.pop(); if (!s) return; ground.set(s[0]); top.set(s[1]); updateCup(); dirty = true; }
+
+/* ---------------- levels ---------------- */
+function bump(cx, cz, rad, h) { forDisc(cx, cz, rad, (i, d) => { const t = 1 - d / rad; top[i] += h * t * t * (3 - 2 * t); }); }
+function ridge(x0, z0, x1, z1, hw, h) {
+  const vx = x1 - x0, vz = z1 - z0, L2 = vx * vx + vz * vz;
+  for (let z = 0; z < M; z++) for (let x = 0; x < M; x++) {
+    const px = x * CS - HALF, pz = z * CS - HALF;
+    const t = Math.max(0, Math.min(1, ((px - x0) * vx + (pz - z0) * vz) / L2));
+    const d = Math.hypot(px - (x0 + vx * t), pz - (z0 + vz * t));
+    if (d < hw) { const s = 1 - d / hw; top[z * M + x] += h * s * s * (3 - 2 * s); }
+  }
+}
+const LEVELS = [
+  { name: 'First run', title: 'Dig a runway',
+    text: 'Drag on the sand to scoop out a channel from the red pipe down to the flag. Keep it sloping downhill, then press Roll. Roll over both shells for three stars.',
+    start: [-5.6, -5.4], dir: [1, 0.8], goal: [5, 5], shells: [[-1.4, -1.6], [2.4, 3.4]], rocks: [],
+    sculpt() { bump(-5.6, -5.4, 3.4, 1.4); } },
+  { name: 'The dune', title: 'Go through, not over',
+    text: 'A dune blocks the way. Dig to its foot, then pick the Tunnel hand (4), press in your channel and drag straight through the dune.',
+    start: [-5, -5.6], dir: [1, 0.6], goal: [4.6, 5.4], shells: [[-2.4, -3.4], [1.4, 3.8]], rocks: [],
+    sculpt() { bump(-5, -5.6, 3.2, 1.3); ridge(-9, 0.6, 9, 0.2, 2.6, 1.9); } },
+  { name: 'Rock garden', title: 'Rocks stay put',
+    text: 'Your hands cannot move the rocks. Wind a track between them and swing past both shells on the way to the cup.',
+    start: [0, -5.8], dir: [0, 1], goal: [0.4, 5.6], shells: [[-4.8, -2.4], [4.6, 2.8]],
+    rocks: [[-1.3, -1.4, 0.7], [1.1, -0.7, 0.8], [3.4, -2.2, 0.6], [-3.6, -0.3, 0.75], [-0.3, 1.7, 0.65], [2.5, 1.0, 0.6], [-2.6, 3.6, 0.6], [6.2, 0.4, 0.6], [-6.2, 1.8, 0.7], [1.8, 4.2, 0.55]],
+    sculpt() { bump(0, -5.8, 3, 1.5); bump(4, 5, 2.2, 0.5); bump(-5, 5.5, 2.5, 0.8); } },
+  { name: 'Free play', title: 'Free play',
+    text: 'An empty sandbox. Build anything you like: loops of runways, long tunnels, a ski jump into the cup.',
+    start: [-6, -6], dir: [1, 1], goal: [6, 6], shells: [], rocks: [],
+    sculpt() { bump(-6, -6, 3, 1.4); } },
+];
+let level = 0, pipeBottom = BASE;
+let shells = [];
+function loadLevel(n) {
+  level = n; const L = LEVELS[n];
+  lock.fill(0);
+  for (let z = 0; z < M; z++) for (let x = 0; x < M; x++) {
+    const px = x * CS - HALF, pz = z * CS - HALF;
+    top[z * M + x] = BASE + 0.035 * Math.sin(px * 0.9 + pz * 0.3) * Math.cos(pz * 0.7 - px * 0.2) + 0.02 * Math.sin(px * 2.3 + 1) * Math.sin(pz * 1.9);
+  }
+  L.sculpt();
+  ground.set(top);
+  while (propGroup.children.length) propGroup.remove(propGroup.children[0]);
+  for (const [rx, rz, rr] of L.rocks) {
+    const base = hAt(top, rx, rz);
+    forDisc(rx, rz, rr, (i, d) => { lock[i] = 1; top[i] = ground[i] = Math.max(top[i], base + rr * 0.75 * Math.sqrt(Math.max(0, 1 - (d / rr) ** 2))); });
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(rr, 1), rockMat);
+    rock.scale.set(1, 0.78, 1); rock.position.set(rx, base + 0.02, rz); rock.rotation.y = rx * 3 + rz;
+    rock.castShadow = rock.receiveShadow = true; propGroup.add(rock);
+  }
+  goal.x = L.goal[0]; goal.z = L.goal[1]; updateCup();
+  const [sx, sz] = L.start; pipeBottom = hAt(top, sx, sz) + 0.5; pipe.position.set(sx, pipeBottom, sz);
+  shells = L.shells.map(([x, z]) => {
+    const m = new THREE.Mesh(shellGeo, shellMat); m.castShadow = true; m.rotation.y = x; propGroup.add(m);
+    return { x, z, mesh: m, got: false, t: 0 };
+  });
+  undoStack.length = 0; dirty = true;
+  resetBall();
+  $('#hintTitle').textContent = L.title; $('#hintText').textContent = L.text; $('#hint').hidden = false;
+  renderLevels();
+}
+
+/* ---------------- game state ---------------- */
+let state = 'build', runTime = 0, got = 0;
+let best = {};
+try { best = JSON.parse(localStorage.getItem('balli-baan-best') || '{}') || {}; } catch (e) { best = {}; }
+function saveBest() { try { localStorage.setItem('balli-baan-best', JSON.stringify(best)); } catch (e) {} }
+
+function resetBall() {
+  state = 'build'; runTime = 0; got = 0; ballWon = false;
+  ballMesh.visible = false; ghost.visible = false;
+  for (const s of shells) { s.got = false; s.t = 0; s.mesh.visible = true; s.mesh.scale.setScalar(1); }
+  $('#result').hidden = true; updateRunUI();
+}
+function rollBall() {
+  resetBall();
+  const L = LEVELS[level];
+  ball.pos.set(L.start[0], Math.max(pipeBottom - 0.05, hAt(ground, L.start[0], L.start[1]) + BALL_R + 0.02), L.start[1]);
+  const dl = Math.hypot(L.dir[0], L.dir[1]);
+  ball.vel.set(L.dir[0] / dl * 1.2, -0.5, L.dir[1] / dl * 1.2);
+  ball.still = 0; ballMesh.visible = true; state = 'rolling';
+  $('#hint').hidden = true; sfx('roll'); updateRunUI();
+}
+let lastWhy = '';
+function finish(win, why) {
+  state = 'done'; lastWhy = win ? 'win' : why.title;
+  const L = LEVELS[level], stars = win ? 1 + got : 0, max = 1 + L.shells.length;
+  if (win && stars > (best[level] || 0)) { best[level] = stars; saveBest(); renderLevels(); }
+  $('#resTitle').textContent = win ? 'In the cup!' : why.title;
+  $('#resStars').innerHTML = win ? Array.from({ length: max }, (_, k) => k < stars ? '★' : '<span class="off">★</span>').join('') : '';
+  $('#resStars').hidden = !win;
+  $('#resText').textContent = win ? `${runTime.toFixed(1)} seconds` + (got < L.shells.length ? ` · ${L.shells.length - got} shell${L.shells.length - got > 1 ? 's' : ''} missed` : (L.shells.length ? ' · every shell collected' : '')) : why.text;
+  $('#next').hidden = !win;
+  $('#next').textContent = level < LEVELS.length - 1 ? 'Next sandbox' : 'Back to the start';
+  $('#result').hidden = false;
+  sfx(win ? 'win' : 'fail'); updateRunUI();
+}
+function updateRunUI() {
+  const L = LEVELS[level], max = 1 + L.shells.length, have = state === 'done' && ballWon ? 1 + got : got;
+  $('#stars').innerHTML = Array.from({ length: max }, (_, k) => `<i class="${k < have ? 'on' : ''}"></i>`).join('');
+  $('#time').textContent = runTime.toFixed(1) + 's';
+  const r = $('#roll'); r.textContent = state === 'rolling' ? 'Stop' : 'Roll!'; r.classList.toggle('stop', state === 'rolling');
+}
+let ballWon = false;
+
+/* physics */
+const nTmp = new THREE.Vector3(), nAcc = new THREE.Vector3(), axis = new THREE.Vector3(), qTmp = new THREE.Quaternion();
+const RING = Array.from({ length: 9 }, (_, k) => k === 0 ? [0, 0] : [Math.cos(k * Math.PI / 4) * BALL_R * 0.85, Math.sin(k * Math.PI / 4) * BALL_R * 0.85]);
+function physStep(dt) {
+  const p = ball.pos, v = ball.vel;
+  v.y -= G * dt;
+  p.addScaledVector(v, dt);
+  ball.contact = false; nAcc.set(0, 0, 0);
+  for (const [ox, oz] of RING) {
+    const qx = p.x + ox, qz = p.z + oz, h = hAt(ground, qx, qz);
+    if (h < p.y - BALL_R * 1.7) continue;
+    normalAt(qx, qz, nTmp);
+    const d = (p.x - qx) * nTmp.x + (p.y - h) * nTmp.y + (p.z - qz) * nTmp.z;
+    if (d < BALL_R) {
+      p.addScaledVector(nTmp, Math.min(BALL_R - d, 0.03));
+      const vn = v.dot(nTmp); if (vn < 0) v.addScaledVector(nTmp, -vn * (1 + BOUNCE));
+      ball.contact = true; nAcc.add(nTmp);
+    }
+  }
+  const tH = hAt(top, p.x, p.z), gH = hAt(ground, p.x, p.z);
+  ball.inTunnel = tH - gH > CAV_MIN;
+  if (ball.inTunnel) { const c = tH - ROOF; if (p.y + BALL_R > c) { p.y = c - BALL_R; if (v.y > 0) v.y *= -0.2; } }
+  if (ball.contact) {
+    nAcc.normalize();
+    const sp = v.length(), fr = ROLL_FR * G * Math.max(0, nAcc.y) * dt;
+    if (sp <= fr) v.set(0, 0, 0); else v.multiplyScalar((sp - fr) / sp);
+    v.multiplyScalar(1 - DRAG * dt);
+  }
+  const sp = v.length(); if (sp > 14) v.multiplyScalar(14 / sp);
+  // roll the texture
+  axis.set(v.z, 0, -v.x); const al = axis.length();
+  if (al > 1e-5) { qTmp.setFromAxisAngle(axis.divideScalar(al), al * dt / BALL_R); ballMesh.quaternion.premultiply(qTmp); }
+}
+function updateBall(dt) {
+  const subs = Math.ceil(dt / 0.002), h = dt / subs;
+  for (let s = 0; s < subs; s++) physStep(h);
+  runTime += dt;
+  const p = ball.pos;
+  ballMesh.position.copy(p); ghost.position.copy(p); ghost.visible = ball.inTunnel;
+  for (const s of shells) {
+    if (s.got) continue;
+    const sy = hAt(top, s.x, s.z);
+    if (Math.hypot(p.x - s.x, p.z - s.z) < 0.42 && Math.abs(p.y - sy - BALL_R) < 0.5) { s.got = true; got++; sfx('shell'); }
+  }
+  if (ball.contact && ball.vel.length() < 0.08) ball.still += dt; else ball.still = 0;
+  if (Math.hypot(p.x - goal.x, p.z - goal.z) < CUP_R - 0.02 && p.y < Math.max(goal.rim - 0.06, goal.floor + BALL_R + 0.1)) { ballWon = true; finish(true); }
+  else if (p.y < 0 || Math.abs(p.x) > HALF + 1 || Math.abs(p.z) > HALF + 1) { ballWon = false; finish(false, { title: 'Over the edge', text: 'The ball jumped out of the sandbox. Build higher banks on the bends.' }); }
+  else if (ball.still > 2) { ballWon = false; finish(false, { title: 'Stuck in the sand', text: 'The ball stopped rolling. Make the runway steeper, or smooth out the bump it got stuck on.' }); }
+  else if (runTime > 60) { ballWon = false; finish(false, { title: 'Out of time', text: 'A whole minute and still rolling. Try a more direct track.' }); }
+}
+
+/* ---------------- camera & input ---------------- */
+const cam = { theta: 0.35, phi: 0.9, dist: 22, target: new THREE.Vector3(0, 1.3, 0) };
+function placeCamera() {
+  const s = Math.sin(cam.phi);
+  camera.position.set(cam.target.x + cam.dist * s * Math.sin(cam.theta), cam.target.y + cam.dist * Math.cos(cam.phi), cam.target.z + cam.dist * s * Math.cos(cam.theta));
+  camera.lookAt(cam.target);
+}
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h;
+  camera.fov = w < h ? 58 : 40; camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize); resize();
+
+const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
+const surf = (x, z) => (Math.abs(x) > HALF || Math.abs(z) > HALF) ? -1 : hAt(top, x, z);
+function pick(cx, cy) {
+  const r = canvas.getBoundingClientRect();
+  ndc.set((cx - r.left) / r.width * 2 - 1, -(cy - r.top) / r.height * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  const o = raycaster.ray.origin, d = raycaster.ray.direction;
+  if (d.y >= -1e-4) return null;
+  const step = 0.04, tEnd = -o.y / d.y;
+  for (let t = Math.max(0, (MAXH + 0.3 - o.y) / d.y); t <= tEnd; t += step) {
+    if (o.y + d.y * t <= surf(o.x + d.x * t, o.z + d.z * t)) {
+      let a = t - step, b = t;
+      for (let k = 0; k < 10; k++) { const m = (a + b) / 2; if (o.y + d.y * m <= surf(o.x + d.x * m, o.z + d.z * m)) b = m; else a = m; }
+      const px = o.x + d.x * b, pz = o.z + d.z * b;
+      if (Math.abs(px) > HALF || Math.abs(pz) > HALF) return null;
+      return new THREE.Vector3(px, hAt(top, px, pz), pz);
+    }
+  }
+  return null;
+}
+
+const pointers = new Map();
+let mode = null, hover = null, pointerXY = null, lastPinch = 0, lastMid = null;
+const stroke = { last: null, target: null, dir: null };
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('pointerdown', e => {
+  ensureAudio();
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    if (mode === 'sculpt') { /* second finger: turn the stroke into camera control */ }
+    mode = 'orbit2'; const [a, b] = [...pointers.values()];
+    lastPinch = Math.hypot(a.x - b.x, a.y - b.y); lastMid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  } else if (pointers.size === 1) {
+    if (e.button === 2 || e.button === 1 || e.altKey) mode = 'orbit';
+    else if (e.button === 0) { mode = 'sculpt'; pushUndo(); stroke.last = null; stroke.target = null; stroke.dir = null; pointerXY = { x: e.clientX, y: e.clientY }; }
+  }
+});
+canvas.addEventListener('pointermove', e => {
+  const prev = pointers.get(e.pointerId);
+  if (prev) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (mode === 'orbit' && prev) {
+    cam.theta -= (e.clientX - prev.x) * 0.006;
+    cam.phi = Math.min(1.35, Math.max(0.2, cam.phi - (e.clientY - prev.y) * 0.005));
+  } else if (mode === 'orbit2' && pointers.size >= 2) {
+    const [a, b] = [...pointers.values()], pinch = Math.hypot(a.x - b.x, a.y - b.y), mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    cam.dist = Math.min(36, Math.max(7, cam.dist * lastPinch / Math.max(1, pinch)));
+    cam.theta -= (mid.x - lastMid.x) * 0.006;
+    cam.phi = Math.min(1.35, Math.max(0.2, cam.phi - (mid.y - lastMid.y) * 0.005));
+    lastPinch = pinch; lastMid = mid;
+  } else if (mode === 'sculpt') pointerXY = { x: e.clientX, y: e.clientY };
+  if (e.pointerType === 'mouse' && mode !== 'orbit') hover = { x: e.clientX, y: e.clientY };
+});
+const endPointer = e => {
+  pointers.delete(e.pointerId);
+  if (pointers.size === 0) { mode = null; if (e.pointerType !== 'mouse') hover = null; }
+  else if (mode === 'orbit2' && pointers.size === 1) mode = 'orbit-wait';
+};
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !pointers.size) hover = null; });
+canvas.addEventListener('wheel', e => { e.preventDefault(); cam.dist = Math.min(36, Math.max(7, cam.dist * (1 + e.deltaY * 0.001))); }, { passive: false });
+
+// Tunnel / runway stroke: the track never climbs. It follows the sand as it was when the
+// stroke began (a little below it) and drops gently; under a hill it stays low and goes underground.
+const RUN_DEPTH = 0.28, RUN_SLOPE = 0.06;
+function tunnelTo(hit, dir) {
+  const orig = undoStack.length ? undoStack[undoStack.length - 1][1] : top;
+  const rt = tunnelR();
+  if (stroke.target === null) { stroke.target = hAt(orig, hit.x, hit.z) - RUN_DEPTH; carveTunnel(hit.x, hit.z, stroke.target, null, orig); return; }
+  if (!stroke.last) { carveTunnel(hit.x, hit.z, stroke.target, dir, orig); return; }
+  const L = Math.hypot(hit.x - stroke.last.x, hit.z - stroke.last.z), n = Math.max(1, Math.ceil(L / (rt * 0.3)));
+  for (let s = 1; s <= n; s++) {
+    const x = stroke.last.x + (hit.x - stroke.last.x) * s / n, z = stroke.last.z + (hit.z - stroke.last.z) * s / n;
+    stroke.target = Math.max(FLOOR + 0.2, Math.min(stroke.target - RUN_SLOPE * L / n, hAt(orig, x, z) - RUN_DEPTH));
+    carveTunnel(x, z, stroke.target, dir, orig);
+  }
+}
+function sculptFrame(dt) {
+  if (!pointerXY) return null;
+  const hit = pick(pointerXY.x, pointerXY.y);
+  if (!hit) { stroke.last = null; return null; }
+  let dir = null;
+  if (stroke.last) { const dx = hit.x - stroke.last.x, dz = hit.z - stroke.last.z, l = Math.hypot(dx, dz); if (l > 1e-3) dir = { x: dx / l, z: dz / l }; }
+  if (tool === 'dig') dig(hit.x, hit.z, dt, dir);
+  else if (tool === 'pile') pile(hit.x, hit.z, dt);
+  else if (tool === 'smooth') smooth(hit.x, hit.z, dt);
+  else if (tool === 'tunnel') {
+    if (dir) stroke.dir = dir;
+    tunnelTo(hit, dir || stroke.dir);
+    if (Math.random() < 0.4) spray(hit.x, hit.y, hit.z, 2, 0.9, 1.6);
+  }
+  relax(hit.x, hit.z, brushR * 1.8 + 0.3, 2);
+  if (Math.hypot(hit.x - goal.x, hit.z - goal.z) < brushR * 1.8 + 0.6) updateCup();
+  dirty = true;
+  stroke.last = tool === 'tunnel' ? hit : (stroke.last && dir === null ? stroke.last : hit);
+  return hit;
+}
+
+/* tools UI */
+function setTool(t) { tool = t; document.querySelectorAll('.tool').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); }
+document.querySelectorAll('.tool').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+$('#size').addEventListener('input', e => { brushR = +e.target.value; });
+$('#undo').addEventListener('click', undo);
+$('#fresh').addEventListener('click', () => loadLevel(level));
+$('#roll').addEventListener('click', () => { ensureAudio(); state === 'rolling' ? resetBall() : rollBall(); });
+$('#again').addEventListener('click', resetBall);
+$('#next').addEventListener('click', () => loadLevel((level + 1) % LEVELS.length));
+function renderLevels() {
+  $('#levels').innerHTML = LEVELS.map((L, k) => {
+    const b = best[k] || 0, max = 1 + L.shells.length;
+    return `<button class="chip" data-l="${k}" aria-pressed="${k === level}" title="${L.name}"><span class="n">${k < 3 ? k + 1 : '∞'}</span><span class="name">${L.name}</span>${b ? `<span class="best" aria-label="${b} of ${max} stars">${'★'.repeat(b)}</span>` : ''}</button>`;
+  }).join('');
+  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => loadLevel(+c.dataset.l)));
+}
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
+  const k = e.key;
+  if (k >= '1' && k <= '4') setTool(['dig', 'pile', 'smooth', 'tunnel'][+k - 1]);
+  else if (k === ' ') { e.preventDefault(); ensureAudio(); state === 'rolling' ? resetBall() : rollBall(); }
+  else if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  else if (k === 'ArrowLeft' || k === 'q') cam.theta += 0.08;
+  else if (k === 'ArrowRight' || k === 'e') cam.theta -= 0.08;
+  else if (k === 'ArrowUp') cam.phi = Math.max(0.2, cam.phi - 0.06);
+  else if (k === 'ArrowDown') cam.phi = Math.min(1.35, cam.phi + 0.06);
+  else if (k === 'Escape' && state !== 'build') resetBall();
+});
+
+/* sound */
+let actx = null;
+function ensureAudio() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; } } }
+function tone(f0, f1, t0, dur, type, vol) {
+  if (!actx) return;
+  const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + t0;
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+function sfx(kind) {
+  if (kind === 'shell') { tone(880, 1320, 0, 0.12, 'triangle', 0.12); tone(1320, 1760, 0.08, 0.15, 'triangle', 0.1); }
+  else if (kind === 'win') [523, 659, 784, 1046].forEach((f, k) => tone(f, f * 1.01, k * 0.09, 0.25, 'triangle', 0.13));
+  else if (kind === 'fail') tone(330, 140, 0, 0.45, 'sine', 0.14);
+  else if (kind === 'roll') tone(220, 440, 0, 0.12, 'sine', 0.08);
+}
+
+/* ---------------- main loop ---------------- */
+const clock = new THREE.Clock();
+let elapsed = 0;
+function frame() {
+  const dt = Math.min(clock.getDelta(), 1 / 30); elapsed += dt;
+  let handHit = null;
+  if (mode === 'sculpt') handHit = sculptFrame(dt);
+  else if (hover && !mode) handHit = pick(hover.x, hover.y);
+  if (state === 'rolling') { updateBall(dt); updateRunUI(); }
+  if (dirty) rebuild();
+
+  // hand
+  const H = hand, P = H.poses[tool], pressing = mode === 'sculpt' && handHit;
+  H.outer.visible = !!handHit;
+  canvas.classList.toggle('hand', !!handHit);
+  const ease = 1 - Math.exp(-dt * 14);
+  H.cur.tilt += (P.tilt - H.cur.tilt) * ease; H.cur.z += (P.z - H.cur.z) * ease; H.cur.lift += (P.lift - H.cur.lift) * ease;
+  H.fingers.forEach((f, k) => {
+    let c = P.curl[k]; if (pressing && tool === 'pile') c *= 0.75 + 0.25 * Math.sin(elapsed * 10 + k);
+    H.cur.curl[k] += (c - H.cur.curl[k]) * ease;
+    f.pivot.rotation.x = -H.cur.curl[k] * 0.6; f.joint.rotation.x = -H.cur.curl[k] * 0.8;
+  });
+  if (handHit) {
+    const sc = 2.3 * Math.max(0.7, Math.min(1.7, brushR / 0.75)) * (tool === 'tunnel' ? 0.8 : 1);
+    const wantY = handHit.y + (pressing ? H.cur.lift * sc - 0.04 : 0.55 + H.cur.lift * sc);
+    const o = H.outer;
+    if (!o.userData.placed) { o.position.set(handHit.x, wantY, handHit.z); o.userData.placed = true; }
+    o.position.x = handHit.x; o.position.z = handHit.z; o.position.y += (wantY - o.position.y) * (1 - Math.exp(-dt * 18));
+    o.rotation.y = cam.theta; o.scale.setScalar(sc);
+    H.inner.rotation.x = H.cur.tilt + (pressing && tool === 'dig' ? Math.sin(elapsed * 14) * 0.12 : 0);
+    H.arm.rotation.x = -0.32 - H.cur.tilt;  // the forearm always reaches back toward the viewer
+    H.inner.position.set(pressing && tool === 'smooth' ? Math.sin(elapsed * 12) * 0.12 : 0, 0, H.cur.z);
+  } else H.outer.userData.placed = false;
+
+  // props
+  const fl = cup.userData.flag; fl.rotation.y = Math.sin(elapsed * 2.2) * 0.25;
+  for (const s of shells) {
+    const y = hAt(top, s.x, s.z);
+    if (s.got) { s.t += dt; s.mesh.position.set(s.x, y + s.t * 1.6, s.z); s.mesh.scale.setScalar(Math.max(0.001, 1 - s.t * 2)); s.mesh.rotation.y += dt * 12; if (s.t > 0.5) s.mesh.visible = false; }
+    else s.mesh.position.set(s.x, y - 0.01, s.z);
+  }
+  stepParticles(dt);
+  placeCamera();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+function sim(maxSec) { for (let t = 0; t < maxSec && state === 'rolling'; t += 1 / 60) updateBall(1 / 60); return { why: lastWhy, state, won: ballWon, got, time: runTime, pos: ball.pos.toArray() }; }
+function strokeAlong(pts, t) {
+  if (t) setTool(t);
+  pushUndo(); stroke.last = null; stroke.target = null;
+  for (let s = 0; s < pts.length; s++) {
+    const [x, z] = pts[s], a = s ? pts[s - 1] : pts[0], L = Math.hypot(x - a[0], z - a[1]) || 1;
+    const steps = s ? Math.ceil(L / 0.3) : 1;
+    for (let k = 1; k <= steps; k++) {
+      const px = a[0] + (x - a[0]) * k / steps, pz = a[1] + (z - a[1]) * k / steps;
+      const hit = new THREE.Vector3(px, hAt(top, px, pz), pz);
+      const dir = stroke.last ? { x: (px - stroke.last.x), z: (pz - stroke.last.z) } : null;
+      if (dir) { const l = Math.hypot(dir.x, dir.z) || 1; dir.x /= l; dir.z /= l; }
+      if (tool === 'tunnel') tunnelTo(hit, dir); else if (tool === 'dig') dig(px, pz, 1 / 30, dir); else if (tool === 'pile') pile(px, pz, 1 / 30); else smooth(px, pz, 1 / 30);
+      relax(px, pz, brushR * 1.8 + 0.3, 2); stroke.last = hit;
+    }
+  }
+  updateCup(); dirty = true;
+}
+window.balliBaan = { strokeAlong, sim, top, ground, hAt, carveTunnel, dig, relax, updateCup, rollBall, loadLevel, ball, get state() { return state; }, get won() { return ballWon; }, markDirty() { dirty = true; }, setTool, cam };
+loadLevel(0);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
